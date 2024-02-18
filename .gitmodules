@@ -1,0 +1,3 @@
+[submodule "AdventOfCode"]
+	path = AdventOfCode
+	url = git@github.com:ntdkhang/AdventOfCode.git
