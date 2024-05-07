@@ -10,14 +10,8 @@ class Solution {
         vector<vector<string>> result;
         for (string word : strs) {
             string sorted = reorder(word);
-            auto it = map.find(sorted);
-            if (it == map.end()) {
-                map[sorted] = vector<string>{word};
-            } else {
-                it->second.push_back(word);
-            }
+            map[sorted].push_back(word);
         }
-
 
         for (auto it = map.begin(); it != map.end(); it++) {
             result.push_back(it->second);
