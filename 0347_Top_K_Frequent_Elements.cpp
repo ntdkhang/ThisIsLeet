@@ -1,29 +1,28 @@
-#include <unordered_map>
 #include <vector>
+#include <map>
 
 using namespace std;
 
 class Solution {
 public:
+
+    static bool cmp(pair<int, int>& a, pair<int, int>& b) {
+        return a.second > b.second;
+    }
+
     vector<int> topKFrequent(vector<int>& nums, int k) {
-        vector<int> res{};
-        unordered_map<int, int> map;
-        for (int num: nums) {
-            map[num]++;
+        vector<int> result;
+        map<int, int> appearance;
+        for (auto iter = nums.begin(); iter != nums.end(); iter++) {
+            appearance[*iter]++;
         }
-
-        vector<pair<int, int>> a;
-        for (auto ele: map){
-            a.push_back(pair(ele.first, ele.second));
+        vector<pair<int, int>> sorted(appearance.begin(), appearance.end());
+        sort(sorted.begin(), sorted.end(), cmp);
+        int count = 0;
+        for (auto iter = sorted.begin(); iter != sorted.end() && count < k; iter++) {
+            result.push_back(iter->first);
+            count++;
         }
-
-        sort(a.begin(), a.end(), [](auto x, auto y) {
-                return x.second > y.second;
-                });
-
-        for (int i = 0 ; i < k; i++) {
-            res.push_back(a[i].first);
-        }
-        return res;
+        return result;
     }
 };
