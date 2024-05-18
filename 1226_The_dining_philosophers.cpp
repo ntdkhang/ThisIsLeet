@@ -2,17 +2,40 @@
 #include <condition_variable>
 #include <vector>
 
-
-class DiningPhilosophers {
+class my_semaphore {
     std::mutex mut;
     std::condition_variable cond;
-    std::vector<bool> fork;
+    int value;
+public:
+    my_semaphore() {
+        value = 0;
+    }
+
+    my_semaphore(int i) : value(i) {}
+
+    void wait() {
+        std::unique_lock<std::mutex> lock(mut);
+        cond.wait(lock, [this] { return value > 0; });
+        value--;
+    }
+
+    void signal() {
+        std::lock_guard<std::mutex> lock(mut);
+        value++;
+        if (value == 1) {
+            cond.notify_all();
+        }
+    }
+};
+
+
+class DiningPhilosophers {
+    my_semaphore sems[5] {my_semaphore{1},my_semaphore{1},my_semaphore{1},my_semaphore{1},my_semaphore{1}};
+    std::mutex mut;
+    std::condition_variable cond;
+
 public:
     DiningPhilosophers() {
-        for (int i = 0; i < 5; i++) {
-            fork.push_back(true);
-        }
-
     }
 
     void wantsToEat(int philosopher,
@@ -22,22 +45,19 @@ public:
                     std::function<void()> putLeftFork,
                     std::function<void()> putRightFork) {
 
-        std::unique_lock<std::mutex> lock(mut);
-        cond.wait(lock, [&] { return (fork[philosopher] && fork[(philosopher + 1) % 5]); });
-
+        {
+            std::lock_guard<std::mutex> lock(mut);
+            sems[(philosopher + 1) % 5].wait();
+            sems[philosopher].wait();
+        }
         pickLeftFork();
-        fork[philosopher] = false;
-
         pickRightFork();
-        fork[(philosopher + 1) % 5] = false;
-
         eat();
 
         putLeftFork();
-        fork[philosopher] = true;
+        sems[(philosopher + 1) % 5].signal();
 
         putRightFork();
-        fork[(philosopher + 1) % 5] = true;
-        cond.notify_all();
+        sems[philosopher].signal();
     }
 };
