@@ -1,16 +1,35 @@
-from datetime import date
 
 
-def numOfDays(date1, date2):
-  #check which date is greater to avoid days output in -ve number
-    if date2 > date1:
-        return (date2-date1).days
+
+
+
+
+
+
+
+
+
+def ArrayChallenge(arr):
+    sum = 0
+    for num in arr:
+        sum += num
+
+    arr.sort()
+
+    largest_product = max(arr[-2] * arr[-1], arr[0] * arr[1])
+
+
+
+    if largest_product > sum * 2:
+        return True
     else:
-        return (date1-date2).days
+        return False
+
+# arr = [2, 2, 2, 2, 4, 1]
+# arr = [1, 1, 2, 10, 3, 12]
+# arr = [2,5,6,-6,16,2,3,6,5,3]
+arr = [2, 2, -4, -8,2, 2, 2, 2,2,2,2,2,2,2, 1]
+
+print(ArrayChallenge(arr))
 
 
-# Driver program
-date2 = date(2018, 12, 13)
-date1 = date(2015, 2, 25)
-print((date1-date2).days)
-# print(numOfDays(date1, date2), "days")
