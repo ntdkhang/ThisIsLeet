@@ -1,44 +1,41 @@
-#include <algorithm>
-#include <set>
 #include <vector>
-#include <unordered_map>
-
-using namespace std;
+#include <map>
 
 class Solution {
 public:
-    vector<vector<int>> threeSum(vector<int>& nums) {
-        set<vector<int>> ret;
-        // vector<vector<int>> ret;
-        unordered_map<int, int> appeared;
-        sort(nums.begin(), nums.end());
+    std::vector<std::vector<int>> threeSum(std::vector<int>& nums) {
+        std::vector<std::vector<int>> result;
+        std::map<int, int> count;
+        std::vector<int> keys;
 
-        for (int num : nums) {
-            appeared[num] += 1;
+        for (std::vector<int>::iterator it = nums.begin(); it != nums.end(); it++) {
+            count[*it]++;
         }
 
-        for (int i = 0; i < nums.size()-1; i++) {
-            for (int j = i+1; j < nums.size(); j++) {
-                int target = - (nums[i] + nums[j]);
-                --appeared[nums[i]];
-                --appeared[nums[j]];
-                if (appeared[target] > 0) {
-                    vector<int> triplet;
-                    triplet.push_back(nums[i]);
-                    triplet.push_back(nums[j]);
-                    triplet.push_back(target);
-                    sort(triplet.begin(), triplet.end());
-                    ret.insert(triplet);
+        for (std::map<int, int>::iterator imap = count.begin(); imap != count.end(); imap++) {
+            keys.push_back(imap->first);
+        }
+
+        for (int i = 0; i < keys.size(); i++) {
+            // decrement count of the first number;
+            int firstNum = keys[i];
+            count[firstNum]--;
+            for (int j = i; j < keys.size(); j++) {
+                int secondNum = keys[j];
+                if (count[secondNum] > 0) {
+                    count[secondNum]--;
+                    int thirdNum = -(firstNum + secondNum);
+                    if (thirdNum >= secondNum && count.find(thirdNum) != count.end() && count[thirdNum] > 0) {
+                        result.push_back(std::vector<int>{firstNum, secondNum, thirdNum});
+                    }
+                    count[secondNum]++;
                 }
-                ++appeared[nums[i]];
-                ++appeared[nums[j]];
             }
+
+            // increment count of first
+            count[firstNum]++;
         }
 
-        vector<vector<int>> output;
-        for (auto triplet : ret) {
-            output.push_back(triplet);
-        }
-        return output;
+        return result;
     }
 };
