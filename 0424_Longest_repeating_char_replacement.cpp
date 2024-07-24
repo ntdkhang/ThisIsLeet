@@ -1,59 +1,27 @@
 #include <algorithm>
 #include <string>
+#include <vector>
 
 class Solution {
 public:
     int characterReplacement(std::string s, int k) {
-        // AACCBBB
-        if (s.size() == 1) {
-            return 1;
-        }
-        int changes = k, count = 1, maxCount = 0;
-        std::string::iterator start = s.begin(), current = s.begin() + 1, nextJump = s.begin();
+        std::vector<int> freq(26, 0);
+        int left = 0, right = 0;
+        int maxFreq = 0, maxCount = 0;
 
-        while (start != s.end() && current != s.end()) {
-            if (*current == *start) {
-                count++;
-                current++;
-            } else {
-                if (changes > 0) {
-                    if (nextJump == start) {
-                        nextJump = current;
-                    }
-                    changes--;
-                    count++;
-                    current++;
-                } else { // reset
-                    if (nextJump != start) {
-                        start = nextJump;
-                    } else {
-                        start++;
-                    }
-                    nextJump = start;
-                    current = start+1;
-                    maxCount = std::max(count, maxCount);
-                    changes = k;
-                    count = 1;
-                }
+        while (right < s.size()) {
+            freq[s[right] - 'A']++;
+            maxFreq = std::max(maxFreq, freq[s[right] - 'A']);
+
+            int length = right - left + 1;
+            if (length - maxFreq > k) {
+                freq[s[left] - 'A']--;
+                left++;
             }
-
-        }
-        count = 1;
-
-        for (auto it = s.rbegin() + 1; it != s.rend(); it++) {
-            if (*it != *(it-1)) {
-                break;
-            } else {
-                count++;
-            }
+            right++;
         }
 
-        maxCount = std::max(count + changes, maxCount);
-
-        if (maxCount > s.size()) {
-            return s.size();
-        }
-
-        return maxCount;
+        int res = maxFreq + k;
+        return std::min(res, static_cast<int>(s.size()));
     }
 };
