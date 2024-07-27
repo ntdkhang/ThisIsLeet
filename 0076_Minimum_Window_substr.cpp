@@ -4,43 +4,49 @@
 class Solution {
 public:
     std::string minWindow(std::string s, std::string t) {
-        int counter = 0;
-        size_t start = 0, end = 0, minStart = 0, minLength = INT_MAX;
-        std::unordered_map<char, int> map;
-
-        if (t.size() > s.size()) {
+        if (s.size() < t.size()) {
             return "";
         }
+        std::unordered_map<char, int> freq;
+        int count = 0, minLength = s.size() + 1;
+        int minLeft = 0;
+        std::string res = "";
 
         for (char c: t) {
-            map[c]++;
+            if (freq[c] == 0) {
+                count++;
+            }
+            freq[c]++;
         }
 
-        for (; end < s.size(); end++) {
-            if (map[s[end]] > 0) {
-                counter++;
-            }
-            map[s[end]]--;
-
-            while (counter == t.size()) {
-                if (end - start + 1 < minLength) {
-                    minLength = end - start + 1;
-                    minStart = start;
+        int left = 0, right = 0;
+        while (right < s.size()) {
+            if (freq.find(s[right])!= freq.end()) {
+                freq[s[right]]--;
+                if (freq[s[right]] == 0) {
+                    count--;
                 }
 
-                map[s[start]]++;
-                if (map[s[start]] > 0) {
-                    counter--;
+                while (count == 0) {
+                    if (right - left + 1 < minLength) {
+                        minLength = right - left + 1;
+                        minLeft = left;
+                    }
+                    if (freq.find(s[left]) != freq.end()) {
+                        freq[s[left]]++;
+                        if (freq[s[left]] == 1) {
+                            count++;
+                        }
+                    }
+                    left++;
                 }
-
-                start++;
             }
+            right++;
+        }
+        if  (minLength != s.size() + 1) {
+            res = s.substr(minLeft, minLength);
         }
 
-        if (minLength == INT_MAX) {
-            return "";
-        }
-
-        return s.substr(minStart, minLength);
+        return res;
     }
 };
