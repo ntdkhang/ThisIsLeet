@@ -2,16 +2,16 @@
 
 class MinStack {
 public:
-    std::vector<std::pair<long, long>> stack;  // pair <value, min>
+    std::vector<std::pair<int, int>> stack;  // pair <value, min>
 
     MinStack() {
     }
 
-    void push(long val) {
+    void push(int val) {
         if (stack.size() == 0) {
             stack.push_back(std::pair(val, val));
         } else {
-            long pre_min = stack.back().second;
+            int pre_min = stack.back().second;
             stack.push_back(std::pair(val, std::min(pre_min, val)));
         }
     }
