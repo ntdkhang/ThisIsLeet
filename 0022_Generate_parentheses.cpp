@@ -7,40 +7,21 @@ public:
     std::vector<std::string> result;
     std::vector<std::string> generateParenthesis(int n) {
         std::string st = "";
-        std::stack<char> closingStack;
-        generateParenthesis(n, st, closingStack);
+        generateParenthesis(0, 0, "", n);
         return result;
     }
 
-    void generateParenthesis(int n, std::string& st, std::stack<char>& closingStack) {
-        if (n == 0) {
-            if (!closingStack.empty()) {
-                return;
-            }
+    void generateParenthesis(int left, int right, std::string st, int n) {
+        if (left + right == n * 2) {
             result.push_back(st);
-            return;
         }
 
-        // Not base case
-        st.push_back('(');
-        closingStack.push(')');
-        generateParenthesis(n - 1, st, closingStack);
-        st.push_back(')');
-        closingStack.pop();
-        generateParenthesis(n - 1, st, closingStack);
-
-        // close everyone
-        while (!closingStack.empty()) {
-            closingStack.pop();
-            st.push_back(')');
-            generateParenthesis(n - 1, st, closingStack);
+        if (left < n) {
+            generateParenthesis(left + 1, right, st + "(", n);
         }
 
-        while (st.back() != '(') {
-            closingStack.push(')');
-            st.pop_back();
+        if (right < left) {
+            generateParenthesis(left, right + 1, st + ")", n);
         }
-        st.pop_back(); // pop the last open
-        closingStack.pop(); // pop the last closing
     }
 };
