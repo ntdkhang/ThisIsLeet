@@ -1,21 +1,24 @@
 #include <vector>
-using namespace std;
 
 class Solution {
 public:
-    int search(vector<int>& nums, int target) {
-        int l = 0, r = nums.size() - 1, mid;
-        while (l<=r) {
-            mid = (l + r) / 2;
-            if (nums.at(mid) < target) {
-                l = mid + 1;
-            } else if (nums.at(mid) > target) {
-                r = mid - 1;
+    int search(std::vector<int>& nums, int target) {
+        int left = 0; int right = nums.size() - 1;
+        int midIdx;
+
+        while (left <= right) {
+            midIdx = (left + right) / 2;
+
+            if (nums[midIdx] == target) {
+                return midIdx;
+            } else if (nums[midIdx] > target) {
+                right = midIdx - 1;
             } else {
-                return mid;
+                left = midIdx + 1;
             }
         }
-        // [-1,0,3,5,9,12]
+
         return -1;
     }
 };
+
